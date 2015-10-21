@@ -7,7 +7,7 @@ import io
 import sys
 
  # private key, do not show to anybody
-TOKEN = 't3iFgZtyswjgfq6QQjgxr81UkumZYp9s' 
+TOKEN = 'your token' 
 
 """
 	First of all, you need to sign up online
