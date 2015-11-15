@@ -7,7 +7,7 @@ import io
 import sys
 
  # private key, do not show to anybody
-TOKEN = 'your token' 
+TOKEN = 'Your token' 
 
 """
 	First of all, you need to sign up online
@@ -18,7 +18,7 @@ TOKEN = 'your token'
 	- pip install beautifulsoup4
 
 	Exemple: (run it in the terminal)
-	$ python shouter_dl.py 非常嫌疑人
+	$ python shouter_dl.py 非常嫌疑犯
 
 	This scriptis only for searching the subtitle of film,
 	the one to search the TV serie will come up soon
@@ -48,9 +48,12 @@ def search_subs(film_name, pos=0, cnt=15):
 	try:
 		r = requests.get(url_with_token, params=parametre)
 	except Exception as e:
-		print e  # TODO
+		print (e)  # TODO
 	response = json.loads(r.text)
 	subs = response['sub']['subs']
+	if not subs:
+		print ('could not search this subtitle')
+		sys.exit(0)
 	return subs
 
 def find_the_best_sub(subs):
@@ -76,13 +79,20 @@ def download(url, film_name):
 	:type film_name: string
 	"""
 	url = 'http://sub.makedie.me' + url
-	print url
 	current_dir = os.path.dirname(os.path.realpath(__file__))
 	headers = trick() 
-	zipfile = requests.get(url, headers=headers)
-	with open(current_dir + '/%s.rar' % film_name, "w")  as local_file:
-		for block in zipfile.iter_content(1024):
-			local_file.write(block)
+	file_content = requests.get(url, headers=headers)
+	extension = url[-3:] 
+	if extension == 'rar':
+		with open(current_dir + '/%s.rar' % film_name, "w")  as local_file:
+			for block in file_content.iter_content(1024):
+				local_file.write(block)
+	elif extension == 'srt':
+		with open(current_dir + '/%s.srt' % film_name, "w")  as local_file:
+			local_file.write(file_content.text.encode('utf-8'))
+	else:
+		print ('rare extension: %s' & url)
+		sys.exit(0)
 
 def get_url(sub_id):
 	"""
@@ -114,9 +124,8 @@ def trick():
 	return headers
 
 # the script starts here
-film = sys.argv[1]
+film = ''.join(sys.argv[1:])
 subs = search_subs(film)
 best_sub_id = find_the_best_sub(subs)
 url = get_url(best_sub_id)
-print url
 download(url, film)
