@@ -82,7 +82,7 @@ def download(url, film_name):
 	current_dir = os.path.dirname(os.path.realpath(__file__))
 	headers = trick() 
 	file_content = requests.get(url, headers=headers)
-	extension = url[-3:] 
+	_, extension = os.path.splitext(url)
 	if extension == 'rar':
 		with open(current_dir + '/%s.rar' % film_name, "w")  as local_file:
 			for block in file_content.iter_content(1024):
@@ -91,7 +91,7 @@ def download(url, film_name):
 		with open(current_dir + '/%s.srt' % film_name, "w")  as local_file:
 			local_file.write(file_content.text.encode('utf-8'))
 	else:
-		print ('rare extension: %s' & url)
+		print ('rare extension: %s' % url)
 		sys.exit(0)
 
 def get_url(sub_id):
