@@ -52,7 +52,7 @@ def search_subs(film_name, pos=0, cnt=15):
 	response = json.loads(r.text)
 	subs = response['sub']['subs']
 	if not subs:
-		print ('could not search this subtitle')
+		print ('could not find this subtitle')
 		sys.exit(0)
 	return subs
 
